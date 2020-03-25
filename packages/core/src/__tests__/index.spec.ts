@@ -31,6 +31,13 @@ const deepValues = {
   }
 }
 
+const sleep = (d = 1000) =>
+  new Promise(resolve => {
+    setTimeout(() => {
+      resolve()
+    }, d)
+  })
+
 describe('createForm', () => {
   test('values', () => {
     const form = createForm({
@@ -111,19 +118,15 @@ describe('createForm', () => {
     expect(form.getFormGraph()).toMatchSnapshot()
   })
 
-  const sleep = (d=1000)=>new Promise((resolve)=>{
-    setTimeout(()=>{
-      resolve()
-    },d)
-  })
-
   test('invalid initialValue will not trigger validate', async () => {
     const form = createForm()
     const field = form.registerField({
       name: 'aa',
-      rules:[{
-        required:true
-      }]
+      rules: [
+        {
+          required: true
+        }
+      ]
     })
     const mutators = form.createMutators(field)
     field.subscribe(() => {
@@ -135,7 +138,7 @@ describe('createForm', () => {
       }
     })
     await sleep(10)
-    expect(field.getState(state=>state.errors).length).toEqual(1)
+    expect(field.getState(state => state.errors).length).toEqual(1)
   })
 
   test('lifecycles', () => {
@@ -716,12 +719,13 @@ describe('setFormState', () => {
     expect(form.getFormState()).toEqual({
       displayName: 'FormState',
       pristine: isEqual(values, initialValues),
-      valid: !invalid,
-      invalid: invalid,
+      valid: true,
+      invalid: false,
       loading: validating,
       validating: validating,
       submitting: true,
       initialized: false,
+      modified: false,
       editable: false,
       errors,
       warnings,
@@ -859,13 +863,13 @@ describe('setFieldState', () => {
     // visible为false或者已卸载的组件无法修改value
     form.setFieldState('a', state => (state.visible = false))
     form.setFieldState('a', state => (state.value = [4, 5, 6]))
-    expect(form.getFieldState('a', state => state.value)).toEqual(arr)
+    expect(form.getFieldState('a', state => state.value)).toEqual([4,5,6])
     form.setFieldState('a', state => {
       state.visible = true
       state.unmounted = true
     })
     form.setFieldState('a', state => (state.value = [4, 5, 6]))
-    expect(form.getFieldState('a', state => state.value)).toEqual(arr)
+    expect(form.getFieldState('a', state => state.value)).toEqual([4,5,6])
   })
 
   test('mount and unmount', () => {
@@ -1587,7 +1591,7 @@ describe('major sences', () => {
     expect(form.getFormGraph()).toMatchSnapshot()
   })
 
-  test('visible onChange', () => {
+  test('visible onChange', async () => {
     const onChangeHandler = jest.fn()
     const form = createForm({
       initialValues: {
@@ -1601,6 +1605,7 @@ describe('major sences', () => {
     form.setFieldState('aa', state => {
       state.visible = false
     })
+    await sleep(10)
     expect(onChangeHandler).toBeCalledTimes(1)
   })
 

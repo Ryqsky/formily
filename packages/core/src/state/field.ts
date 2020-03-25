@@ -34,6 +34,7 @@ export const FieldState = createStateModel<IFieldState, IFieldStateProps>(
       selfEditable: undefined,
       formEditable: undefined,
       value: undefined,
+      visibleCacheValue: undefined,
       initialValue: undefined,
       rules: [],
       required: false,
@@ -74,7 +75,7 @@ export const FieldState = createStateModel<IFieldState, IFieldStateProps>(
 
       values = toArr(values)
 
-      if(/array/ig.test(this.state.dataType)){
+      if (/array/gi.test(this.state.dataType)) {
         value = toArr(value)
         values[0] = toArr(values[0])
       }
@@ -166,11 +167,6 @@ export const FieldState = createStateModel<IFieldState, IFieldStateProps>(
     }
 
     computeState(draft: IFieldState, prevState: IFieldState) {
-      //如果是隐藏状态，则禁止修改值
-      if (!draft.visible || draft.unmounted) {
-        draft.value = prevState.value
-        draft.initialValue = prevState.initialValue
-      }
       //操作重定向
       if (!isEqual(draft.errors, prevState.errors)) {
         draft.effectErrors = draft.errors
@@ -202,12 +198,10 @@ export const FieldState = createStateModel<IFieldState, IFieldStateProps>(
       const { value, values } = this.readValues(draft)
       draft.value = value
       draft.values = values
-      if (
-        draft.initialized &&
-        prevState.initialized &&
-        !isEqual(prevState.value, draft.value)
-      ) {
-        draft.modified = true
+      if (draft.initialized && prevState.initialized && !draft.modified) {
+        if (!isEqual(prevState.value, draft.value)) {
+          draft.modified = true
+        }
       }
       if (isEqual(draft.initialValue, draft.value)) {
         draft.pristine = true

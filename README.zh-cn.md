@@ -28,13 +28,13 @@
 使用 Ant Design：
 
 ```bash
-npm install --save antd @formily/antd
+npm install --save antd @formily/antd @formily/antd-components
 ```
 
 使用 Fusion Design：
 
 ```bash
-npm install --save @alifd/next @formily/next
+npm install --save @alifd/next @formily/next @formily/next-components
 ```
 
 使用Formily React渲染引擎包:
@@ -76,12 +76,10 @@ https://formilyjs.org
 
 [codesandbox](https://codesandbox.io/s/o5up7)
 
-## 社区
+## 集团其他产品
 
+- [icejs](https://github.com/alibaba/ice)
 
-| Online Chat Room                                             | 微信                                                         | 钉钉 |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ---- |
-| [gitter.im](https://gitter.im/alibaba-formily/community?source=orgpage) | <img width="200" src="https://img.alicdn.com/tfs/TB1jhm5VNYaK1RjSZFnXXa80pXa-620-824.png"/> |   <img width="200" src="https://img.alicdn.com/tfs/TB1pHMzUrPpK1RjSZFFXXa5PpXa-620-818.png"/>   |
 
 ## 贡献者
 

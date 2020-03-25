@@ -8,10 +8,13 @@ import {
   ISchemaFormProps,
   IMarkupSchemaFieldProps,
   ISchemaFieldComponentProps,
-  FormPathPattern
+  FormPathPattern,
+  IFormProps,
+  IFieldStateUIProps
 } from '@formily/react-schema-renderer'
 import { PreviewTextConfigProps } from '@formily/react-shared-components'
 import { StyledComponent } from 'styled-components'
+export * from '@formily/react-schema-renderer'
 
 type ColSpanType = number | string
 
@@ -24,6 +27,22 @@ export type IAntdSchemaFormProps = Omit<
   ISchemaFormProps
 
 export type IAntdSchemaFieldProps = IMarkupSchemaFieldProps
+
+export type IAntdFormProps = Omit<FormProps, 'onSubmit' | 'defaultValue'> &
+  IFormItemTopProps &
+  IFormProps<any, any>
+
+export type IAntdFormItemProps = IFieldStateUIProps &
+  ItemProps & {
+    valueName?: string
+    eventName?: string
+    component?: React.JSXElementConstructor<any>
+    itemStyle?: {
+      [key: string]: string | number
+    }
+    itemClassName?: string
+    [key: string]: any
+  }
 
 export interface ISubmitProps extends ButtonProps {
   onSubmit?: ISchemaFormProps['onSubmit']
@@ -48,12 +67,14 @@ export type IFormItemTopProps = React.PropsWithChildren<
   }
 >
 
-export interface ICompatItemProps
-  extends Omit<ItemProps, 'labelCol' | 'wrapperCol'>,
-    Partial<ISchemaFieldComponentProps> {
-  labelCol?: number | { span: number; offset?: number }
-  wrapperCol?: number | { span: number; offset?: number }
-}
+export type ISchemaFieldAdaptorProps = Omit<
+  ItemProps,
+  'labelCol' | 'wrapperCol'
+> &
+  Partial<ISchemaFieldComponentProps> & {
+    labelCol?: number | { span: number; offset?: number }
+    wrapperCol?: number | { span: number; offset?: number }
+  }
 
 export type StyledCP<P extends {}> = StyledComponent<
   (props: React.PropsWithChildren<P>) => React.ReactElement,

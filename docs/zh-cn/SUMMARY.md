@@ -1,13 +1,17 @@
+- 首页
+  - [Formily 是什么](./introduction/formily.md)
+  - [竞品对比](./introduction/comparison.md)
 - Schema Form
   - [介绍](./schema-develop/introduction.md)
   - [快速开始](./schema-develop/quick-start.md)
   - 概念/术语理解
-    - [理解Form Schema](./schema-develop/form-schema.md)
+    - [理解 Form Schema](./schema-develop/form-schema.md)
     - [理解表单生命周期](./schema-develop/lifecycle.md)
-    - [理解actions/effects](./schema-develop/actions-effects.md)
+    - [理解 actions/effects](./schema-develop/actions-effects.md)
     - [理解表单路径系统](./schema-develop/form-path.md)
     - [理解传值属性](./schema-develop/form-value.md)
     - [理解表单状态](./schema-develop/form-state.md)
+    - [理解表单布局](./schema-develop/mega-layout-antd.md)
     - [理解表单节点树](./schema-develop/form-graph.md)
     - [理解表单扩展机制](./schema-develop/form-extension.md)
   - 实践教程
@@ -16,6 +20,7 @@
     - [性能优化实践](./schema-develop/performance.md)
     - [管理业务逻辑](./schema-develop/manage-business.md)
     - [实现递归渲染组件](./schema-develop/recursive-render.md)
+    - [玩转查询列表](./schema-develop/form-query.md)
     - [玩转自增列表组件](./schema-develop/complext-self-inc-component.md)
     - [实现超复杂自定义组件](./schema-develop/create-complex-field-component.md)
   - [FAQ](./schema-develop/faq.md)
@@ -24,10 +29,11 @@
   - [快速开始](./jsx-develop/quick-start.md)
   - 概念/术语理解
     - [理解表单生命周期](./jsx-develop/lifecycle.md)
-    - [理解actions/effects](./jsx-develop/actions-effects.md)
+    - [理解 actions/effects](./jsx-develop/actions-effects.md)
     - [理解表单路径系统](./jsx-develop/form-path.md)
     - [理解传值属性](./jsx-develop/form-value.md)
     - [理解表单状态](./jsx-develop/form-state.md)
+    - [理解表单布局](./jsx-develop/mega-layout-antd.md)
     - [理解表单节点树](./jsx-develop/form-graph.md)
     - [理解表单扩展机制](./jsx-develop/form-extension.md)
   - 实践教程
@@ -39,7 +45,7 @@
   - [FAQ](./jsx-develop/faq.md)
 - Help
   - 升级迁移指南
-    - [UForm迁移Formily](./uform-upgrade.md)
+    - [UForm 迁移 Formily](./uform-upgrade.md)
   - 开发调试指南
     - [Chrome Devtools](./devtools.md)
   - [其他文档/资料](./other-links.md)
@@ -52,6 +58,6 @@
     - [next](../../packages/next/README.zh-cn.md)
     - [next-components](../../packages/next-components/README.zh-cn.md)
   - Rax Meet
-    - meet
-    - meet-components
+    - [meet](../../packages/meet/README.zh-cn.md)
+    - [meet-components](../../packages/meet-components/README.zh-cn.md)
 - [GITHUB](https://github.com/alibaba/formily)

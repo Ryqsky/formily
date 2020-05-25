@@ -7,6 +7,7 @@ import {
 import { createForm } from './index'
 import { FormLifeCycle } from './shared/lifecycle'
 import { Draft } from 'immer'
+export * from '@formily/validator'
 
 export type FormLifeCycleHandler<T> = (payload: T, context: any) => void
 
@@ -108,7 +109,11 @@ export type StateDirtyMap<P> = {
 export interface StateModel<P> {
   publishState?: (state: P) => P
   dirtyCheck?: (dirtys: StateDirtyMap<P>) => StateDirtyMap<P> | void
-  computeState?: (state: Draft<P>, preState?: P) => Draft<P> | void
+  computeState?: (
+    state: Draft<P>,
+    preState?: P,
+    dirtys?: StateDirtyMap<P>
+  ) => Draft<P> | void
 }
 
 export interface IStateModelFactory<S, P> {
@@ -156,6 +161,7 @@ export interface IFieldState<FieldProps = any> {
   required: boolean
   mounted: boolean
   unmounted: boolean
+  unmountRemoveValue: boolean
   props: FieldProps
   [key: string]: any
 }
@@ -188,6 +194,7 @@ export interface IFieldStateProps<FieldProps = any> {
   rules?: ValidatePatternRules[] | ValidatePatternRules
   required?: boolean
   editable?: boolean
+  unmountRemoveValue?: boolean
   visible?: boolean
   display?: boolean
   useDirty?: boolean
@@ -221,7 +228,6 @@ export const isStateModel = (target: any): target is IModel =>
   target && isFn(target.getState)
 
 export interface IFormState<FormProps = any> {
-  pristine: boolean
   valid: boolean
   invalid: boolean
   loading: boolean
@@ -232,8 +238,8 @@ export interface IFormState<FormProps = any> {
   editable: boolean | ((name: string) => boolean)
   errors: string[]
   warnings: string[]
-  values: {}
-  initialValues: {}
+  values: any
+  initialValues: any
   mounted: boolean
   unmounted: boolean
   props: FormProps

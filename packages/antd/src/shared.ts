@@ -14,7 +14,9 @@ export const autoScrollInValidateFailed = (formRef: any) => {
   if (formRef.current) {
     setTimeout(() => {
       const elements = formRef.current.querySelectorAll(
-        '.ant-form-item-control.has-error'
+        isAntdV4
+          ? '.ant-form-item-has-error'
+          : '.ant-form-item-control.has-error'
       )
       if (elements && elements.length) {
         if (!elements[0].scrollIntoView) return
@@ -52,9 +54,9 @@ export const transformDataSourceKey = (component, dataSourceKey) => {
 }
 
 export const normalizeCol = (
-  col: { span: number; offset?: number } | number,
+  col?: { span: number; offset?: number } | number,
   defaultValue?: { span: number }
-): { span: number; offset?: number } => {
+): { span: number; offset?: number } | undefined => {
   if (!col) {
     return defaultValue
   } else {

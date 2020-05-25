@@ -1,13 +1,22 @@
 import React, { useContext, Fragment } from 'react'
 import { Field, VirtualField, IFieldState } from '@formily/react'
-import { FormPath, isFn, isStr, isEqual, isValid, log } from '@formily/shared'
+import {
+  FormPath,
+  isFn,
+  isStr,
+  isEqual,
+  isValid,
+  log,
+  lowercase
+} from '@formily/shared'
 import {
   ISchemaFieldProps,
   ISchemaFieldComponentProps,
   ISchemaVirtualFieldComponentProps
 } from '../types'
 import { Schema } from '../shared/schema'
-import SchemaContext, {
+import {
+  FormSchemaContext,
   FormComponentsContext,
   FormExpressionScopeContext
 } from '../shared/context'
@@ -37,7 +46,7 @@ export const SchemaField: React.FunctionComponent<ISchemaFieldProps> = (
   props: ISchemaFieldProps
 ) => {
   const path = FormPath.parse(props.path)
-  const formSchema = useContext(SchemaContext)
+  const formSchema = useContext(FormSchemaContext)
   const fieldSchema = new Schema(props.schema || formSchema.get(path))
   const formRegistry = useContext(FormComponentsContext)
   const expressionScope = useContext(FormExpressionScopeContext)
@@ -64,7 +73,7 @@ export const SchemaField: React.FunctionComponent<ISchemaFieldProps> = (
     return (
       <Field
         path={path}
-        initialValue={fieldSchema.default}
+        initialValue={complieExpression(fieldSchema.default, expressionScope)}
         props={complieExpression(
           fieldSchema.getSelfProps(),
           expressionScope,
@@ -73,10 +82,22 @@ export const SchemaField: React.FunctionComponent<ISchemaFieldProps> = (
         dataType={fieldSchema.type}
         triggerType={fieldSchema.getExtendsTriggerType()}
         editable={fieldSchema.getExtendsEditable()}
-        visible={fieldSchema.getExtendsVisible()}
-        display={fieldSchema.getExtendsDisplay()}
-        required={fieldSchema.getExtendsRequired()}
-        rules={fieldSchema.getExtendsRules()}
+        visible={complieExpression(
+          fieldSchema.getExtendsVisible(),
+          expressionScope
+        )}
+        display={complieExpression(
+          fieldSchema.getExtendsDisplay(),
+          expressionScope
+        )}
+        required={complieExpression(
+          fieldSchema.getExtendsRequired(),
+          expressionScope
+        )}
+        rules={complieExpression(
+          fieldSchema.getExtendsRules(),
+          expressionScope
+        )}
         computeState={computeSchemaState}
       >
         {({ state, mutators, form }) => {
@@ -99,6 +120,14 @@ export const SchemaField: React.FunctionComponent<ISchemaFieldProps> = (
     return (
       <VirtualField
         path={path}
+        visible={complieExpression(
+          fieldSchema.getExtendsVisible(),
+          expressionScope
+        )}
+        display={complieExpression(
+          fieldSchema.getExtendsDisplay(),
+          expressionScope
+        )}
         props={complieExpression(
           fieldSchema.getSelfProps(),
           expressionScope,
@@ -169,8 +198,9 @@ export const SchemaField: React.FunctionComponent<ISchemaFieldProps> = (
     if (isStr(initialComponent)) {
       if (formRegistry.fields[initialComponent]) {
         return renderFieldDelegate(props => {
-          const stateComponent =
+          const stateComponent = lowercase(
             props.schema.getExtendsComponent() || props.schema.type
+          )
           if (!isStr(stateComponent)) {
             log.error(
               `Can not found any form component <${stateComponent}>.Its key is ${ErrorTipPathStr}.`
@@ -197,8 +227,9 @@ export const SchemaField: React.FunctionComponent<ISchemaFieldProps> = (
         })
       } else if (formRegistry.virtualFields[initialComponent]) {
         return renderVirtualFieldDelegate(props => {
-          const stateComponent =
+          const stateComponent = lowercase(
             props.schema.getExtendsComponent() || props.schema.type
+          )
           if (!isStr(stateComponent)) {
             log.error(
               `Can not found any virtual form component <${stateComponent}>.Its key is ${ErrorTipPathStr}.`

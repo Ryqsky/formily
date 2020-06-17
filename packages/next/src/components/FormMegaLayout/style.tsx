@@ -1,21 +1,53 @@
 import { css } from 'styled-components'
+import { EComponentSize, EPxType, PxValue, ELineHeightPx, EFontSizePx } from './types'
+import insetStyle from './inset'
 
 const formatPx = num => (typeof num === 'string' ? num.replace('px', '') : num)
+
+const getPxFromSize = function (size: EComponentSize = EComponentSize.MEDIUM, type: EPxType): PxValue {
+    let lineSize = {
+        [EComponentSize.SMALL]: ELineHeightPx.small,
+        [EComponentSize.MEDIUM]: ELineHeightPx.medium,
+        [EComponentSize.MIDDLE]: ELineHeightPx.middle,
+        [EComponentSize.LARGE]: ELineHeightPx.large,
+    }
+    let fontSize = {
+        [EComponentSize.SMALL]: EFontSizePx.small,
+        [EComponentSize.MEDIUM]: EFontSizePx.medium,
+        [EComponentSize.MIDDLE]: EFontSizePx.middle,
+        [EComponentSize.LARGE]: EFontSizePx.large,
+    }
+    let defaultSize: EComponentSize = EComponentSize.MEDIUM
+    let thisSize: {
+        [key in EComponentSize]: PxValue
+    } = type === EPxType.Font ? fontSize : lineSize
+
+    return thisSize[size] || thisSize[defaultSize]
+}
+
 export const computeNextStyleBase = (props) => {
     const result: any = {}
     const {
         labelAlign,
         isLayout,
         inline,
-        labelCol, grid, full, context = {}, contextColumns, columns, isRoot, autoRow,
-        span, nested, size,
+        labelCol, grid, inset, context = {}, contextColumns, columns, hasBorder, autoRow,
+        span, nested,
         // lg, m, s,
         responsive
     } = props
+    const size: EComponentSize = props.size
     const labelWidth = formatPx(props.labelWidth)
     const wrapperWidth = formatPx(props.wrapperWidth)
     const gutter = formatPx(props.gutter)
     const { lg, m, s } = responsive || {}
+
+    if (inset) {
+        result.insetStyle = insetStyle({ hasBorder, isLayout })
+    }
+  
+    // 嵌套不需要执行响应
+    const disabledResponsive = context.grid && grid && context.responsive
 
     // label对齐相关 labelAlign
     result.labelAlignStyle = `
@@ -45,17 +77,17 @@ export const computeNextStyleBase = (props) => {
             > .mega-layout-container-before,
             > .formily-mega-item-before {
                 flex: initial;
-                margin-right: ${`${parseInt(gutter) / 2}px`};
-                line-height: ${size === 'small' ? '20px' : ((size === 'middle' || !size) ? '28px' : '40px') };
-                font-size: ${size === 'small' ? '12px' : ((size === 'middle' || !size) ? '14px' : '16px') };
+                margin-right: ${parseInt(gutter) / 2}px;
+                line-height: ${getPxFromSize(size, EPxType.Line)}px;
+                font-size: ${getPxFromSize(size, EPxType.Font)}px;
             }
 
             > .mega-layout-container-after,
             > .formily-mega-item-after {
                 flex: initial;
-                margin-left: ${`${parseInt(gutter) / 2}px`};
-                line-height: ${size === 'small' ? '20px' : ((size === 'middle' || !size) ? '28px' : '40px') };
-                font-size: ${size === 'small' ? '12px' : ((size === 'middle' || !size) ? '14px' : '16px') };
+                margin-left: ${parseInt(gutter) / 2}px;
+                line-height: ${getPxFromSize(size, EPxType.Line)}px;
+                font-size: ${getPxFromSize(size, EPxType.Font)}px;
             }
         }
     `
@@ -87,9 +119,9 @@ export const computeNextStyleBase = (props) => {
                     width: ${labelWidth}px;
                     max-width: ${labelWidth}px;
                     flex: ${labelAlign !== 'top' ? `0 0 ${labelWidth}px` : 'initial'};
-                    ` : 
-                    ''
-                }
+                    ` :
+                ''
+            }
             }
 
             & > .next-form-item-control {
@@ -97,9 +129,9 @@ export const computeNextStyleBase = (props) => {
                     width: ${wrapperWidth}px;
                     max-width: ${wrapperWidth}px;
                     flex: ${labelAlign !== 'top' ? `0 0 ${wrapperWidth}px` : 'initial'};
-                    ` : 
-                    `flex: 1;`
-                }
+                    ` :
+                `flex: 1;`
+            }
             }
         `
     }
@@ -128,23 +160,26 @@ export const computeNextStyleBase = (props) => {
         }
     }
 
-    const gridContainerStyle = responsive ? `
-        @media (max-width: 720px) {
-            grid-template-columns: repeat(${autoRow ? s : 'auto-fit'}, minmax(100px, 1fr));
-        }
-        
-        @media (min-width: 720px) and (max-width: 1200px) {
-            grid-template-columns: repeat(${autoRow ? m : 'auto-fit'}, minmax(100px, 1fr));
-        }
-        @media (min-width: 1200px) {
-            grid-template-columns: repeat(${autoRow ? lg : 'auto-fit'}, minmax(100px, 1fr));
-        }
-    ` : `
-        grid-template-columns: repeat(${autoRow ? columns : 'auto-fit'}, minmax(100px, 1fr));
-    `
+    const gridContainerStyle = (nested?: boolean) => {
+        const frStyle = nested ? '1fr' : 'minmax(100px, 1fr)';
+        return !disabledResponsive && responsive ? `
+            @media (max-width: 720px) {
+                grid-template-columns: repeat(${autoRow ? s : 'auto-fit'}, ${frStyle});
+            }
+            
+            @media (min-width: 720px) and (max-width: 1200px) {
+                grid-template-columns: repeat(${autoRow ? m : 'auto-fit'}, ${frStyle});
+            }
+            @media (min-width: 1200px) {
+                grid-template-columns: repeat(${autoRow ? lg : 'auto-fit'}, ${frStyle});
+            }
+        ` : `
+            grid-template-columns: repeat(${autoRow ? columns : 'auto-fit'}, ${frStyle});
+        `
+    }
 
     const minColumns = nested ? Math.min(columns, contextColumns) : columns
-    const gridItemSpanStyle = responsive ? `
+    const gridItemSpanStyle = !disabledResponsive && responsive ? `
         @media (max-width: 720px) {
             grid-column-start: span ${s > span ? span : s};
         }
@@ -173,7 +208,7 @@ export const computeNextStyleBase = (props) => {
                         grid-column-gap: ${parseInt(gutter)}px;
                         grid-row-gap: ${parseInt(gutter)}px;
 
-                        ${gridContainerStyle}
+                        ${gridContainerStyle()}
                     }
                 }
             }
@@ -214,7 +249,7 @@ export const computeNextStyleBase = (props) => {
                         grid-column-gap: ${parseInt(gutter)}px;
                         grid-row-gap: ${parseInt(gutter)}px;
                         
-                        ${gridContainerStyle}
+                        ${gridContainerStyle(true)}
                     }
                 }
             }
@@ -256,7 +291,7 @@ export const computeNextStyleBase = (props) => {
 
 export const computeStyle = (props) => {
     const styleResult = computeNextStyleBase(props)
-    
+
     // labelAlign, addon 是任何布局模式都可以用到
     // inline 和 grid 是互斥关系, 优先级: inline > grid
     // 最终调用一次css计算方法，会自动筛去同位置不生效的代码
@@ -271,5 +306,6 @@ export const computeStyle = (props) => {
         ${styleResult.gridItemStyle}
         ${styleResult.nestLayoutItemStyle}
         ${styleResult.layoutMarginStyle}
+        ${styleResult.insetStyle}
     `
 }

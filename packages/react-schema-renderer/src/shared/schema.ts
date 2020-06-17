@@ -305,7 +305,6 @@ export class Schema implements ISchema {
     if (isValid(this['x-rules'])) {
       rules = rules.concat(this['x-rules'])
     }
-
     return rules
   }
   getExtendsRequired() {
@@ -341,7 +340,7 @@ export class Schema implements ISchema {
   }
 
   getMegaLayoutProps() {
-    return this['x-mega-props'] || {}
+    return this['x-mega-props'] || this.getExtendsComponentProps()['mega-props'] || {}
   }
 
   getExtendsTriggerType() {

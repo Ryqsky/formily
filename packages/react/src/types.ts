@@ -1,7 +1,7 @@
 import React from 'react'
 import {
-  IFieldStateProps,
-  IVirtualFieldStateProps,
+  IFieldRegistryProps,
+  IVirtualFieldRegistryProps,
   IForm,
   IMutators,
   IFieldState,
@@ -16,6 +16,7 @@ export * from '@formily/core'
 
 type ILayoutLabelAlign = 'top' | 'left' | 'right'
 export interface ILayoutProps {
+  hasBorder?: boolean
   context?: any
   isRoot?: boolean
   isLayout?: boolean
@@ -117,13 +118,13 @@ export interface IVirtualFieldAPI {
   props: {}
 }
 
-export interface IFieldStateUIProps extends IFieldStateProps {
+export interface IFieldStateUIProps extends IFieldRegistryProps {
   triggerType?: 'onChange' | 'onBlur' | 'none'
   getValueFromEvent?: (...args: any[]) => any
   children?: React.ReactElement | ((api: IFieldAPI) => React.ReactElement)
 }
 
-export interface IVirtualFieldProps extends IVirtualFieldStateProps {
+export interface IVirtualFieldStateUIProps extends IVirtualFieldRegistryProps {
   children?:
     | React.ReactElement
     | ((api: IVirtualFieldAPI) => React.ReactElement)
